@@ -104,6 +104,7 @@ class CompactCalendarController {
     private int currentDayBackgroundColor;
     private int currentDayTextColor;
     private int calenderTextColor;
+    private int calenderTitleTextColor;
     private int currentSelectedDayBackgroundColor;
     private int currentSelectedDayTextColor;
     private boolean compactCalendarSelectorActive;
@@ -148,6 +149,7 @@ class CompactCalendarController {
             try {
                 currentDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayBackgroundColor, currentDayBackgroundColor);
                 calenderTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTextColor, calenderTextColor);
+                calenderTitleTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarTitleTextColor, calenderTitleTextColor);
                 currentDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentDayTextColor, calenderTextColor);
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
@@ -924,10 +926,10 @@ class CompactCalendarController {
             if (dayRow == 0) {
                 // first row, so draw the first letter of the day
                 if (shouldDrawDaysHeader) {
-                    dayPaint.setColor(calenderTextColor);
+                    dayPaint.setColor(calenderTitleTextColor);
                     dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     dayPaint.setStyle(Paint.Style.FILL);
-                    dayPaint.setColor(calenderTextColor);
+                    dayPaint.setColor(calenderTitleTextColor);
                     canvas.drawText(dayColumnNames[colDirection], xPosition, paddingHeight, dayPaint);
                     dayPaint.setTypeface(Typeface.DEFAULT);
                 }

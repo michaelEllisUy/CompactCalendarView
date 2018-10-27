@@ -17,6 +17,7 @@
         app:compactCalendarEventIndicatorStyle="small_indicator"
         app:compactCalendarOtherMonthDaysTextColor="#534c4c"
         app:compactCalendarSelectorActive="false"
+        app:compactCalendarTitleTextColor="@color/black"
         app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="true"
         app:compactCalendarTargetHeight="250dp"
         app:compactCalendarTextColor="#fff"
