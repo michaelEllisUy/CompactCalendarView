@@ -480,24 +480,28 @@ class CompactCalendarController {
             return;
         }
 
-        int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
-        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
+        if (compactCalendarSelectorActive) {
+            int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
+            int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
 
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, monthsScrolledSoFar(), 0);
+            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, monthsScrolledSoFar(), 0);
 
-        int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
+            int firstDayOfMonth = getDayOfWeek(calendarWithFirstDayOfMonth);
 
-        int dayOfMonth = ((dayRow - 1) * 7) - firstDayOfMonth;
-        if (isRtl) {
-            dayOfMonth += 6 - dayColumn;
+            int dayOfMonth = ((dayRow - 1) * 7) - firstDayOfMonth;
+            if (isRtl) {
+                dayOfMonth += 6 - dayColumn;
+            } else {
+                dayOfMonth += dayColumn;
+            }
+            if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+                    && dayOfMonth >= 0) {
+                calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
+
+                currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
+                performOnDayClickCallback(currentCalender.getTime());
+            }
         } else {
-            dayOfMonth += dayColumn;
-        }
-        if (dayOfMonth < calendarWithFirstDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
-                && dayOfMonth >= 0) {
-            calendarWithFirstDayOfMonth.add(Calendar.DATE, dayOfMonth);
-
-            currentCalender.setTimeInMillis(calendarWithFirstDayOfMonth.getTimeInMillis());
             performOnDayClickCallback(currentCalender.getTime());
         }
     }
