@@ -18,7 +18,7 @@
         <attr name="compactCalendarBackgroundColor" format="color"/>
         <attr name="compactCalendarCurrentDayBackgroundColor" format="color"/>
         <attr name="compactCalendarCurrentDayTextColor" format="color"/>
-        <attr name="compactCalendarCurrentCurrentDaySelectorActive" format="boolean"/>
+        <attr name="compactCalendarSelectorActive" format="boolean"/>
         <attr name="compactCalendarCurrentSelectedDayBackgroundColor" format="color"/>
         <attr name="compactCalendarCurrentSelectedDayTextColor" format="color"/>
         <attr name="compactCalendarTextColor" format="color"/>

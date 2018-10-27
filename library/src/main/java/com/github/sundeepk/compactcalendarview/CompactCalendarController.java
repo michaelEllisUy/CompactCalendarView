@@ -106,7 +106,7 @@ class CompactCalendarController {
     private int calenderTextColor;
     private int currentSelectedDayBackgroundColor;
     private int currentSelectedDayTextColor;
-    private boolean compactCalendarCurrentCurrentDaySelectorActive;
+    private boolean compactCalendarSelectorActive;
     private int calenderBackgroundColor = Color.WHITE;
     private int otherMonthDaysTextColor;
     private TimeZone timeZone;
@@ -152,7 +152,7 @@ class CompactCalendarController {
                 otherMonthDaysTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarOtherMonthDaysTextColor, otherMonthDaysTextColor);
                 currentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayBackgroundColor, currentSelectedDayBackgroundColor);
                 currentSelectedDayTextColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarCurrentSelectedDayTextColor, calenderTextColor);
-                compactCalendarCurrentCurrentDaySelectorActive = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarCurrentCurrentDaySelectorActive, true);
+                compactCalendarSelectorActive = typedArray.getBoolean(R.styleable.CompactCalendarView_compactCalendarSelectorActive, true);
                 calenderBackgroundColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarBackgroundColor, calenderBackgroundColor);
                 multiEventIndicatorColor = typedArray.getColor(R.styleable.CompactCalendarView_compactCalendarMultiEventIndicatorColor, multiEventIndicatorColor);
                 textSize = typedArray.getDimensionPixelSize(R.styleable.CompactCalendarView_compactCalendarTextSize,
@@ -330,8 +330,8 @@ class CompactCalendarController {
         this.currentSelectedDayTextColor = currentSelectedDayTextColor;
     }
 
-    void setCompactCalendarCurrentCurrentDaySelectorActive(boolean isActive) {
-        this.compactCalendarCurrentCurrentDaySelectorActive = isActive;
+    void setCompactCalendarSelectorActive(boolean isActive) {
+        this.compactCalendarSelectorActive = isActive;
     }
 
     void setCalenderBackgroundColor(int calenderBackgroundColor) {
@@ -933,7 +933,7 @@ class CompactCalendarController {
                 if (currentCalender.get(Calendar.DAY_OF_MONTH) == day
                         && isSameMonthAsCurrentCalendar
                         && !isAnimatingWithExpose
-                        && compactCalendarCurrentCurrentDaySelectorActive) {
+                        && compactCalendarSelectorActive) {
                     drawDayCircleIndicator(currentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, currentSelectedDayBackgroundColor);
                     defaultCalenderTextColorToUse = currentSelectedDayTextColor;
                 } else if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day && !isAnimatingWithExpose) {
