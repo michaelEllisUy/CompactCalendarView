@@ -94,7 +94,6 @@ class CompactCalendarController {
     private PointF accumulatedScrollOffset = new PointF();
     private OverScroller scroller;
     private Paint dayPaint = new Paint();
-    private Paint todayTextPaint = new Paint();
     private Paint background = new Paint();
     private Rect textSizeRect;
     private String[] dayColumnNames;
@@ -111,9 +110,6 @@ class CompactCalendarController {
     private int calenderBackgroundColor = Color.WHITE;
     private int otherMonthDaysTextColor;
     private TimeZone timeZone;
-
-    //custom font
-    private Typeface todayTypeface = Typeface.SANS_SERIF;
 
     /**
      * Only used in onDrawCurrentMonth to temporarily calculate previous month days
@@ -199,19 +195,6 @@ class CompactCalendarController {
         dayPaint.setTextSize(textSize);
         dayPaint.setColor(calenderTextColor);
         dayPaint.getTextBounds("31", 0, "31".length(), textSizeRect);
-
-        if (context != null) {
-            todayTypeface = Typeface.createFromAsset(context.getAssets(),
-                    context.getString(R.string.sf_pro_display_black));
-        }
-        todayTextPaint = new Paint();
-        todayTextPaint.setTypeface(todayTypeface);
-        todayTextPaint.setTextAlign(Paint.Align.CENTER);
-        todayTextPaint.setStyle(Paint.Style.STROKE);
-        todayTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        todayTextPaint.setTextSize(textSize);
-        todayTextPaint.setColor(calenderTextColor);
-
 
         textHeight = textSizeRect.height() * 3;
         textWidth = textSizeRect.width() * 2;
@@ -979,9 +962,12 @@ class CompactCalendarController {
                     dayPaint.setColor(defaultCalenderTextColorToUse);
                     if (currentCalender.get(Calendar.DAY_OF_MONTH) == day
                             && isSameMonthAsCurrentCalendar) {
-                        canvas.drawText(String.valueOf(day), xPosition, yPosition, todayTextPaint);
+                        dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                        dayPaint.setFakeBoldText(true);
+                        canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                        dayPaint.setFakeBoldText(false);
+                        dayPaint.setTypeface(Typeface.DEFAULT);
                     } else {
-                        dayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
                         canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
                     }
                 }
