@@ -31,7 +31,6 @@ import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_
 
 
 class CompactCalendarController {
-
     public static final int IDLE = 0;
     public static final int EXPOSE_CALENDAR_ANIMATION = 1;
     public static final int EXPAND_COLLAPSE_CALENDAR = 2;
@@ -78,12 +77,12 @@ class CompactCalendarController {
     private boolean isScrolling;
     private boolean shouldDrawDaysHeader = true;
     private boolean shouldDrawIndicatorsBelowSelectedDays = false;
-    private boolean displayOtherMonthDays = false;
+    private boolean displayOtherMonthDays;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
     private boolean isRtl = false;
 
     private CompactCalendarViewListener listener;
-    private VelocityTracker velocityTracker = null;
+    private VelocityTracker velocityTracker;
     private Direction currentDirection = Direction.NONE;
     private Date currentDate = new Date();
     private Locale locale;
@@ -95,6 +94,7 @@ class CompactCalendarController {
     private PointF accumulatedScrollOffset = new PointF();
     private OverScroller scroller;
     private Paint dayPaint = new Paint();
+    private Paint todayTextPaint = new Paint();
     private Paint background = new Paint();
     private Rect textSizeRect;
     private String[] dayColumnNames;
@@ -111,6 +111,9 @@ class CompactCalendarController {
     private int calenderBackgroundColor = Color.WHITE;
     private int otherMonthDaysTextColor;
     private TimeZone timeZone;
+
+    //custom font
+    private Typeface todayTypeface = Typeface.SANS_SERIF;
 
     /**
      * Only used in onDrawCurrentMonth to temporarily calculate previous month days
@@ -196,6 +199,20 @@ class CompactCalendarController {
         dayPaint.setTextSize(textSize);
         dayPaint.setColor(calenderTextColor);
         dayPaint.getTextBounds("31", 0, "31".length(), textSizeRect);
+
+        if (context != null) {
+            todayTypeface = Typeface.createFromAsset(context.getAssets(),
+                    context.getString(R.string.sf_pro_display_black));
+        }
+        todayTextPaint = new Paint();
+        todayTextPaint.setTypeface(todayTypeface);
+        todayTextPaint.setTextAlign(Paint.Align.CENTER);
+        todayTextPaint.setStyle(Paint.Style.STROKE);
+        todayTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        todayTextPaint.setTextSize(textSize);
+        todayTextPaint.setColor(calenderTextColor);
+
+
         textHeight = textSizeRect.height() * 3;
         textWidth = textSizeRect.width() * 2;
 
@@ -960,7 +977,13 @@ class CompactCalendarController {
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(defaultCalenderTextColorToUse);
-                    canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    if (currentCalender.get(Calendar.DAY_OF_MONTH) == day
+                            && isSameMonthAsCurrentCalendar) {
+                        canvas.drawText(String.valueOf(day), xPosition, yPosition, todayTextPaint);
+                    } else {
+                        dayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+                        canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
+                    }
                 }
             }
         }

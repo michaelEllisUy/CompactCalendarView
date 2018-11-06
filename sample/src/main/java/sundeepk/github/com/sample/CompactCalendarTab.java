@@ -65,16 +65,17 @@ public class CompactCalendarTab extends Fragment {
         // below allows you to configure colors for the current day the user has selected
         // compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
         compactCalendarView.setUseThreeLetterAbbreviation(false);
-        compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
+        compactCalendarView.setFirstDayOfWeek(Calendar.SUNDAY);
         compactCalendarView.setIsRtl(false);
+        compactCalendarView.setLocale(TimeZone.getDefault(), Locale.getDefault());
         compactCalendarView.displayOtherMonthDays(false);
-        //compactCalendarView.setIsRtl(true);
+//        compactCalendarView.setIsRtl(true);
         long time = new Date().getTime();
         int color = ContextCompat.getColor(getContext(), R.color.black);
         Event event = new Event(color, time);
         compactCalendarView.addEvent(event);
-        loadEvents();
-        loadEventsForYear(2017);
+//        loadEvents();
+//        loadEventsForYear(2018);
         compactCalendarView.invalidate();
 
         logEventsByMonth(compactCalendarView);
@@ -110,7 +111,6 @@ public class CompactCalendarTab extends Fragment {
                     }
                     adapter.notifyDataSetChanged();
                 }
-
             }
 
             @Override
