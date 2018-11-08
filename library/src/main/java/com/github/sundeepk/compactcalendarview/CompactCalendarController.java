@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -362,6 +363,25 @@ class CompactCalendarController {
         } else {
             scrollPrev();
         }
+    }
+
+    void scrollTo(@NonNull Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        int minuendMonth = calendar.get(Calendar.MONTH);
+        int minuendYear = calendar.get(Calendar.YEAR);
+
+        calendar.setTime(date);
+        int subtrahendMonth = calendar.get(Calendar.MONTH);
+        int subtrahendYear = calendar.get(Calendar.YEAR);
+        monthsScrolledSoFar = ((minuendYear - subtrahendYear) * calendar.getMaximum(Calendar.MONTH))
+                + (minuendMonth - subtrahendMonth);
+        accumulatedScrollOffset.x = monthsScrolledSoFar * width;
+        if (shouldSelectFirstDayOfMonthOnScroll) {
+            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentCalender.getTime(), 0, 1);
+            setCurrentDate(calendarWithFirstDayOfMonth.getTime());
+        }
+        performMonthScrollCallback();
     }
 
     private void scrollNext() {
