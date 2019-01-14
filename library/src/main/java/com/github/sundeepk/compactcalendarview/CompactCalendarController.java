@@ -436,7 +436,7 @@ class CompactCalendarController {
 
     void onMeasure(int width, int height, int paddingRight, int paddingLeft) {
         widthPerDay = (width) / DAYS_IN_WEEK;
-        heightPerDay = targetHeight > 0 ? targetHeight / 7 : height / 7;
+        setCorrectHeightPerDayForMonth(Calendar.getInstance());
         this.width = width;
         this.distanceThresholdForAutoScroll = (int) (width * 0.50);
         this.height = height;
@@ -503,7 +503,8 @@ class CompactCalendarController {
         }
 
         int dayColumn = Math.round((paddingLeft + e.getX() - paddingWidth - paddingRight) / widthPerDay);
-        int dayRow = Math.round((e.getY() - paddingHeight) / heightPerDay);
+        int currentHeightPerDay = getCorrectHeightPerDayForMonth(calendarWithFirstDayOfMonth);
+        int dayRow = Math.round((e.getY() - paddingHeight) / currentHeightPerDay);
 
         setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, monthsScrolledSoFar(), 0);
 
@@ -766,6 +767,18 @@ class CompactCalendarController {
         drawMonth(canvas, calendarWithFirstDayOfMonth, width * -monthsScrolledSoFar);
     }
 
+    private void setCorrectHeightPerDayForMonth(Calendar monthToDrawCalender) {
+        int totalWeeks = WeekUtils.getNumberOfWeeks(monthToDrawCalender.get(Calendar.YEAR),
+                monthToDrawCalender.get(Calendar.MONTH));
+        heightPerDay = targetHeight > 0 ? targetHeight / (totalWeeks + 1) : height / (totalWeeks + 1);
+    }
+
+    private int getCorrectHeightPerDayForMonth(Calendar monthToDrawCalender) {
+        int totalWeeks = WeekUtils.getNumberOfWeeks(monthToDrawCalender.get(Calendar.YEAR),
+                monthToDrawCalender.get(Calendar.MONTH));
+        return targetHeight > 0 ? targetHeight / (totalWeeks + 1) : height / (totalWeeks + 1);
+    }
+
     private int monthsScrolledSoFar() {
         return isRtl ? monthsScrolledSoFar : -monthsScrolledSoFar;
     }
@@ -900,6 +913,7 @@ class CompactCalendarController {
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalender, int offset) {
+        setCorrectHeightPerDayForMonth(monthToDrawCalender);
         drawEvents(canvas, monthToDrawCalender, offset);
 
         //offset by one because we want to start from Monday
@@ -918,8 +932,11 @@ class CompactCalendarController {
         tempPreviousMonthCalendar.add(Calendar.MONTH, -1);
         int maximumPreviousMonthDay = tempPreviousMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
+        int numberOfWeeks = WeekUtils.getNumberOfWeeks(monthToDrawCalender.get(Calendar.YEAR),
+                monthToDrawCalender.get(Calendar.MONTH));
+
         for (int dayColumn = 0, colDirection = isRtl ? 6 : 0, dayRow = 0; dayColumn <= 6; dayRow++) {
-            if (dayRow == 7) {
+            if (dayRow == numberOfWeeks + 1) {
                 if (isRtl) {
                     colDirection--;
                 } else {
@@ -980,8 +997,7 @@ class CompactCalendarController {
                 } else {
                     dayPaint.setStyle(Paint.Style.FILL);
                     dayPaint.setColor(defaultCalenderTextColorToUse);
-                    if (currentCalender.get(Calendar.DAY_OF_MONTH) == day
-                            && isSameMonthAsCurrentCalendar) {
+                    if (isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day) {
                         dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         dayPaint.setFakeBoldText(true);
                         canvas.drawText(String.valueOf(day), xPosition, yPosition, dayPaint);
@@ -1019,7 +1035,7 @@ class CompactCalendarController {
             float maxRadius = circleScale * bigCircleIndicatorRadius * 1.4f;
             drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius : growfactorIndicator, x, y - (textHeight / 6));
         } else {
-            drawCircle(canvas, circleScale * bigCircleIndicatorRadius, x, y - (textHeight / 6));
+            drawCircle(canvas, circleScale * (widthPerDay / 3), x, y - (textHeight / 6));
         }
     }
 

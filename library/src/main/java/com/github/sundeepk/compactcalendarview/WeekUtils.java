@@ -2,6 +2,7 @@ package com.github.sundeepk.compactcalendarview;
 
 import java.text.DateFormatSymbols;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class WeekUtils {
@@ -33,5 +34,20 @@ public class WeekUtils {
         return weekDayNames;
     }
 
+    static int getNumberOfWeeks(int year, int month) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        int numOfWeeksInMonth = 1;
+        while (c.get(Calendar.MONTH) == month) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            if (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                    && c.get(Calendar.MONTH) == month) {
+                numOfWeeksInMonth++;
+            }
+        }
+        return numOfWeeksInMonth;
+    }
 
 }

@@ -42,23 +42,26 @@ public class CompactCalendarTab extends Fragment {
     private CompactCalendarView compactCalendarView;
     private ActionBar toolbar;
 
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View mainTabView = inflater.inflate(R.layout.main_tab,container,false);
+        return inflater.inflate(R.layout.main_tab, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         final List<String> mutableBookings = new ArrayList<>();
 
-        final ListView bookingsListView = mainTabView.findViewById(R.id.bookings_listview);
-        final Button showPreviousMonthBut = mainTabView.findViewById(R.id.prev_button);
-        final Button showNextMonthBut = mainTabView.findViewById(R.id.next_button);
-        final Button slideCalendarBut = mainTabView.findViewById(R.id.slide_calendar);
-        final Button showCalendarWithAnimationBut = mainTabView.findViewById(R.id.show_with_animation_calendar);
-        final Button setLocaleBut = mainTabView.findViewById(R.id.set_locale);
-        final Button removeAllEventsBut = mainTabView.findViewById(R.id.remove_all_events);
+        final ListView bookingsListView = view.findViewById(R.id.bookings_listview);
+        final Button showPreviousMonthBut = view.findViewById(R.id.prev_button);
+        final Button showNextMonthBut = view.findViewById(R.id.next_button);
+        final Button slideCalendarBut = view.findViewById(R.id.slide_calendar);
+        final Button showCalendarWithAnimationBut = view.findViewById(R.id.show_with_animation_calendar);
+        final Button setLocaleBut = view.findViewById(R.id.set_locale);
+        final Button removeAllEventsBut = view.findViewById(R.id.remove_all_events);
 
         final ArrayAdapter adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mutableBookings);
         bookingsListView.setAdapter(adapter);
-        compactCalendarView = mainTabView.findViewById(R.id.compactcalendar_view);
+        compactCalendarView = view.findViewById(R.id.compactcalendar_view);
 
         // below allows you to configure color for the current day in the month
         // compactCalendarView.setCurrentDayBackgroundColor(getResources().getColor(R.color.black));
@@ -72,11 +75,21 @@ public class CompactCalendarTab extends Fragment {
 //        compactCalendarView.setIsRtl(true);
         long time = new Date().getTime();
         int color = ContextCompat.getColor(getContext(), R.color.black);
-        Event event = new Event(color, time);
-        compactCalendarView.addEvent(event);
+
+        List<Event> eventsToAdd = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        for (int i = 0; i < 30; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            Log.d("TAG", String.format("Calendar Timeo: %s", calendar.getTime().toString()));
+            Event event = new Event(color, calendar.getTime().getTime());
+            eventsToAdd.add(event);
+        }
+
+        compactCalendarView.addEvents(eventsToAdd);
 //        loadEvents();
 //        loadEventsForYear(2018);
-        compactCalendarView.invalidate();
+
 
         logEventsByMonth(compactCalendarView);
 
@@ -103,14 +116,14 @@ public class CompactCalendarTab extends Fragment {
                 toolbar.setTitle(dateFormatForMonth.format(dateClicked));
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
-                if (bookingsFromMap != null) {
-                    Log.d(TAG, bookingsFromMap.toString());
-                    mutableBookings.clear();
-                    for (Event booking : bookingsFromMap) {
-                        mutableBookings.add((String) booking.getData());
-                    }
-                    adapter.notifyDataSetChanged();
-                }
+//                if (bookingsFromMap != null) {
+//                    Log.d(TAG, bookingsFromMap.toString());
+//                    mutableBookings.clear();
+//                    for (Event booking : bookingsFromMap) {
+//                        mutableBookings.add((String) booking.getData());
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                }
             }
 
             @Override
@@ -122,7 +135,11 @@ public class CompactCalendarTab extends Fragment {
         showPreviousMonthBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compactCalendarView.scrollLeft();
+                Calendar instance = Calendar.getInstance();
+                instance.setTime(new Date());
+                instance.add(Calendar.MONTH, -11);
+                compactCalendarView.scrollTo(instance.getTime());
+//                compactCalendarView.scrollLeft();
             }
         });
 
@@ -179,8 +196,8 @@ public class CompactCalendarTab extends Fragment {
 
         // uncomment below to open onCreate
         //openCalendarOnCreate(v);
-
-        return mainTabView;
+        compactCalendarView.invalidate();
+        compactCalendarView.requestLayout();
     }
 
     @NonNull
@@ -290,13 +307,13 @@ public class CompactCalendarTab extends Fragment {
     private List<Event> getEvents(long timeInMillis, int day) {
         if (day < 2) {
             return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
-        } else if ( day > 2 && day <= 4) {
+        } else if (day > 2 && day <= 4) {
             return Arrays.asList(
                     new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
                     new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)));
         } else {
             return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis) ),
+                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)),
                     new Event(Color.argb(255, 100, 68, 65), timeInMillis, "Event 2 at " + new Date(timeInMillis)),
                     new Event(Color.argb(255, 70, 68, 65), timeInMillis, "Event 3 at " + new Date(timeInMillis)));
         }
