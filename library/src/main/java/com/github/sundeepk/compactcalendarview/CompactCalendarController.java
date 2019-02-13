@@ -374,7 +374,7 @@ class CompactCalendarController {
         calendar.setTime(date);
         int subtrahendMonth = calendar.get(Calendar.MONTH);
         int subtrahendYear = calendar.get(Calendar.YEAR);
-        monthsScrolledSoFar = ((minuendYear - subtrahendYear) * calendar.getMaximum(Calendar.MONTH))
+        monthsScrolledSoFar = ((minuendYear - subtrahendYear) * (calendar.getMaximum(Calendar.MONTH) + 1))
                 + (minuendMonth - subtrahendMonth);
         accumulatedScrollOffset.x = monthsScrolledSoFar * width;
         if (shouldSelectFirstDayOfMonthOnScroll) {
