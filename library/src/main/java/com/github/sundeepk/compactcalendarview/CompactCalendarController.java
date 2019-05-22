@@ -81,6 +81,7 @@ class CompactCalendarController {
     private boolean displayOtherMonthDays;
     private boolean shouldSelectFirstDayOfMonthOnScroll = true;
     private boolean isRtl = false;
+    private boolean scrollPastTodayEnabled = true;
 
     private CompactCalendarViewListener listener;
     private VelocityTracker velocityTracker;
@@ -246,6 +247,10 @@ class CompactCalendarController {
 
     void setIsRtl(boolean isRtl) {
         this.isRtl = isRtl;
+    }
+
+    void setScrollPastTodayEnabled(boolean scrollPastTodayEnabled) {
+        this.scrollPastTodayEnabled = scrollPastTodayEnabled;
     }
 
     void setShouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll) {
@@ -593,13 +598,15 @@ class CompactCalendarController {
 
     private void handleHorizontalScrolling() {
         int velocityX = computeVelocity();
-        handleSmoothScrolling(velocityX);
+        if (canScrollPastCurrentRealMonth(-velocityX)) {
+            handleSmoothScrolling(velocityX);
 
-        currentDirection = Direction.NONE;
-        setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, monthsScrolledSoFar(), 0);
+            currentDirection = Direction.NONE;
+            setCalenderToFirstDayOfMonth(calendarWithFirstDayOfMonth, currentDate, monthsScrolledSoFar(), 0);
 
-        if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
-            setCalenderToFirstDayOfMonth(currentCalender, currentDate, monthsScrolledSoFar(), 0);
+            if (calendarWithFirstDayOfMonth.get(Calendar.MONTH) != currentCalender.get(Calendar.MONTH) && shouldSelectFirstDayOfMonthOnScroll) {
+                setCalenderToFirstDayOfMonth(currentCalender, currentDate, monthsScrolledSoFar(), 0);
+            }
         }
     }
 
@@ -668,6 +675,14 @@ class CompactCalendarController {
         Calendar calendar = Calendar.getInstance(timeZone, locale);
         calendar.setTime(currentDate);
         calendar.add(Calendar.MONTH, monthsScrolledSoFar());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        setToMidnight(calendar);
+        return calendar.getTime();
+    }
+
+    Date getFirstDayOfCurrentRealActualMonth() {
+        Calendar calendar = Calendar.getInstance(timeZone, locale);
+        calendar.setTime(new Date());
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         setToMidnight(calendar);
         return calendar.getTime();
@@ -1054,5 +1069,15 @@ class CompactCalendarController {
 
     private void drawCircle(Canvas canvas, float radius, float x, float y) {
         canvas.drawCircle(x, y, radius, dayPaint);
+    }
+
+    boolean canScrollPastCurrentRealMonth(float distanceX) {
+        if (scrollPastTodayEnabled) {
+            return true;
+        } else {
+            Date firstDayOfCurrentMonth = getFirstDayOfCurrentMonth();
+            Date today = getFirstDayOfCurrentRealActualMonth();
+            return !(today.equals(firstDayOfCurrentMonth) && distanceX > 0);
+        }
     }
 }

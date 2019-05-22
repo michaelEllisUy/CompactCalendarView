@@ -70,7 +70,7 @@ public class CompactCalendarView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (horizontalScrollEnabled) {
-                if (Math.abs(distanceX) > 0) {
+                if (Math.abs(distanceX) > 0 && compactCalendarController.canScrollPastCurrentRealMonth(distanceX)) {
                     getParent().requestDisallowInterceptTouchEvent(true);
 
                     compactCalendarController.onScroll(e1, e2, distanceX, distanceY);
@@ -318,6 +318,10 @@ public class CompactCalendarView extends View {
         compactCalendarController.setIsRtl(isRtl);
     }
 
+    public void setScrollPastTodayEnabled(boolean scrollPastTodayEnabled) {
+        compactCalendarController.setScrollPastTodayEnabled(scrollPastTodayEnabled);
+    }
+
     public void shouldSelectFirstDayOfMonthOnScroll(boolean shouldSelectFirstDayOfMonthOnScroll) {
         compactCalendarController.setShouldSelectFirstDayOfMonthOnScroll(shouldSelectFirstDayOfMonthOnScroll);
     }
@@ -447,6 +451,9 @@ public class CompactCalendarView extends View {
     public boolean canScrollHorizontally(int direction) {
         if (this.getVisibility() == View.GONE) {
             return false;
+        }
+        if (compactCalendarController.canScrollPastCurrentRealMonth(direction)) {
+            return this.horizontalScrollEnabled;
         }
         // Prevents ViewPager from scrolling horizontally by announcing that (issue #82)
         return this.horizontalScrollEnabled;

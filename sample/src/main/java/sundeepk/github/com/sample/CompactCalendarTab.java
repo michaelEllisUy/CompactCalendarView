@@ -70,6 +70,8 @@ public class CompactCalendarTab extends Fragment {
         compactCalendarView.setUseThreeLetterAbbreviation(false);
         compactCalendarView.setFirstDayOfWeek(Calendar.SUNDAY);
         compactCalendarView.setIsRtl(false);
+        //below allows to scroll or not past todays month!
+        compactCalendarView.setScrollPastTodayEnabled(true);
         compactCalendarView.setLocale(TimeZone.getDefault(), Locale.getDefault());
         compactCalendarView.displayOtherMonthDays(false);
 //        compactCalendarView.setIsRtl(true);
