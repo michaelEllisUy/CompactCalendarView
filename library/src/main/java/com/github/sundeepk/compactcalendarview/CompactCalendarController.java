@@ -1050,7 +1050,7 @@ class CompactCalendarController {
             float maxRadius = circleScale * bigCircleIndicatorRadius * 1.4f;
             drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius : growfactorIndicator, x, y - (textHeight / 6));
         } else {
-            drawCircle(canvas, circleScale * (widthPerDay / 3), x, y - (textHeight / 6));
+            drawCircle(canvas, circleScale * (Math.min((float) widthPerDay, (float) heightPerDay) / 2 - 3), x, y - (textHeight / 6));
         }
     }
 
